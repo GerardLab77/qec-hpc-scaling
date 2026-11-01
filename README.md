@@ -9,37 +9,20 @@ Stim generates noisy quantum-memory experiments. PyMatching predicts logical
 corrections from detector events. The benchmark separates warmed decoding and
 dispatch costs from sampling, model construction, and process startup.
 
-## Questions
+## Research questions
 
 - How does batch size affect decoder throughput and amortized cost per shot?
 - How does increasing surface-code distance and round count change decoding cost?
 - When does splitting a fixed batch across CPU workers improve throughput?
 - How much overhead sits outside the decoder itself?
 
-## Project status
+## Approach
 
-The local MVP is complete and has been benchmarked. Its source, tests, results,
-and documentation are being published in ten logical batches. This is an
-incremental release of existing work.
+The decoding workload uses Stim and PyMatching directly. An adapted SLURM path
+reuses Riverlane QStone's generator. Measurements distinguish decoder execution
+from process startup, input generation, and dispatch overhead.
 
-The measured workload uses Stim and PyMatching directly. An adapted SLURM path
-reuses Riverlane QStone's generator. No HPC execution has been performed.
-
-## Publication sequence
-
-1. **Project overview and publication plan** — this commit.
-2. Repository foundations, dependencies, and tooling audit.
-3. Seeded workload and process-based measurement implementation.
-4. Configurations and repeated benchmark runner.
-5. Decoder correctness and parallel-equivalence tests.
-6. Statistical analysis, plots, and analysis safeguards.
-7. Raw local measurements and environment metadata.
-8. Generated figures and result summaries.
-9. QStone-based SLURM pathway and upstream observations.
-10. Full findings, methodology, interview notes, and CI configuration.
-
-This repository is not yet the runnable release. Installation and execution
-instructions will accompany the relevant source and configuration batches.
+Results are based on local CPU execution. No HPC execution has been performed.
 
 ## Scope
 
