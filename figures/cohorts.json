@@ -1,0 +1,23 @@
+{
+  "c5c46f13b622": {
+    "hostname": "DESKTOP-6S6ONMQ",
+    "processor": "Intel64 Family 6 Model 165 Stepping 3, GenuineIntel",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "versions": {
+      "stim": "1.16.0",
+      "pymatching": "2.4.0",
+      "numpy": "1.26.2",
+      "scipy": "1.15.3",
+      "matplotlib": "3.10.3",
+      "psutil": "5.9.5",
+      "networkx": "3.4.2"
+    },
+    "label": "local",
+    "config_sha256": "48f28f86e7f6a56bd9b81861226f40453d794ca88a1e8b17b5121711453ac157",
+    "source_hashes": {
+      "analyse_results.py": "c1a6e4e9a2f87a6327e37a150ebc9e52c21cb7296785f16ec1cf78dd873da607",
+      "qec_bench.py": "979dc3895b117326e7ca55521ae9ab6c6eacd040b3d58346549bd213b411096c",
+      "run_scaling.py": "52bff8b41a8013be111955f08d8011e95a75b2979003645f9d544446a999bcfe"
+    }
+  }
+}

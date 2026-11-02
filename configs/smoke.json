@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "seed": 20261101,
+  "repetitions": 2,
+  "experiments": [
+    {"name": "smoke", "distances": [3], "shots": [1000], "workers": [1, 2], "p": 0.005}
+  ]
+}

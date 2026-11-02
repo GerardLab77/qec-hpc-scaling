@@ -1,0 +1,11 @@
+# Optional generation-only environment; no QPU connector or MPI dependencies.
+# Place a pinned QStone source checkout on --qstone-source, do not install its
+# full optional backend stack just to render a scheduler template.
+-r requirements.txt
+pandas==2.3.1
+Jinja2==3.1.6
+jsonschema==4.24.0
+pandera==0.24.0
+typeguard==4.4.4
+typing_inspect==0.9.0
+mypy_extensions==1.1.0

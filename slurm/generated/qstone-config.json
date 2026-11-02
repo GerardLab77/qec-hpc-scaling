@@ -1,0 +1,40 @@
+{
+  "environment": {
+    "project_name": "CHANGE_ME",
+    "job_count": 1,
+    "scheduling_mode": "NONE",
+    "qpu": {
+      "mode": "EMULATED"
+    },
+    "connectivity": {
+      "mode": "NO_LINK",
+      "qpu": {
+        "ip_address": "127.0.0.1",
+        "port": 0
+      }
+    }
+  },
+  "jobs": [
+    {
+      "type": "OfflineQEC",
+      "qubits": [
+        1
+      ],
+      "num_shots": [
+        1
+      ],
+      "nthreads": 1,
+      "walltime": "00:30:00",
+      "app_args": {},
+      "app_logging_level": 2
+    }
+  ],
+  "users": [
+    {
+      "user": "qec",
+      "computations": {
+        "OfflineQEC": 1.0
+      }
+    }
+  ]
+}

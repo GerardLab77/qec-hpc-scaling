@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#SBATCH -A CHANGE_ME
+#SBATCH -t 00:30:00
+#SBATCH -N 1
+#SBATCH -J QStone
+#SBATCH -o out.%J
+#SBATCH -e err.%J
+
+
+srun  python  "$EXEC_PATH"/jobs.py full --src "${qs_src}" --cfg "${qs_cfg}"
+ 

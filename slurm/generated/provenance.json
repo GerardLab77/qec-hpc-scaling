@@ -1,0 +1,8 @@
+{
+  "qstone_commit_inspected": "49375fce635259eaea910b1bfede58483bc8e937",
+  "verified_template_git_blob": "989244473a19a431327e67c1e0893391a2a6a8e5",
+  "config": "configs\\local.json",
+  "cpus_per_task": 4,
+  "status": "generated locally; not submitted or validated on SLURM",
+  "adaptation": "Preserve generated header, nthreads=1 (one node); add task/CPU/memory requests; replace QPU stage commands with offline runner"
+}

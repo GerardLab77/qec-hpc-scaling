@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "seed": 20261101,
+  "repetitions": 5,
+  "experiments": [
+    {"name": "batch_size", "distances": [5], "shots": [1000, 10000, 100000], "workers": [1], "p": 0.005},
+    {"name": "complexity", "distances": [3, 5, 7], "shots": [100000], "workers": [1], "p": 0.005},
+    {"name": "strong_scaling", "distances": [5], "shots": [10000, 100000], "workers": [1, 2, 4], "p": 0.005}
+  ]
+}

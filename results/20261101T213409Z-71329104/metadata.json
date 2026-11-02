@@ -1,0 +1,103 @@
+{
+  "run_id": "20261101T213409Z-71329104",
+  "label": "local",
+  "config": {
+    "schema_version": 1,
+    "seed": 20261101,
+    "repetitions": 5,
+    "experiments": [
+      {
+        "name": "batch_size",
+        "distances": [
+          5
+        ],
+        "shots": [
+          1000,
+          10000,
+          100000
+        ],
+        "workers": [
+          1
+        ],
+        "p": 0.005
+      },
+      {
+        "name": "complexity",
+        "distances": [
+          3,
+          5,
+          7
+        ],
+        "shots": [
+          100000
+        ],
+        "workers": [
+          1
+        ],
+        "p": 0.005
+      },
+      {
+        "name": "strong_scaling",
+        "distances": [
+          5
+        ],
+        "shots": [
+          10000,
+          100000
+        ],
+        "workers": [
+          1,
+          2,
+          4
+        ],
+        "p": 0.005
+      }
+    ]
+  },
+  "config_sha256": "48f28f86e7f6a56bd9b81861226f40453d794ca88a1e8b17b5121711453ac157",
+  "git_revision": null,
+  "git_dirty": null,
+  "hardware": {
+    "hostname": "DESKTOP-6S6ONMQ",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 3, GenuineIntel",
+    "python": "3.10.6 (tags/v3.10.6:9c7b4bd, Aug  1 2022, 21:53:49) [MSC v.1932 64 bit (AMD64)]",
+    "logical_cpus": 12,
+    "physical_cores": 6,
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "ram_bytes": 25672945664,
+    "versions": {
+      "stim": "1.16.0",
+      "pymatching": "2.4.0",
+      "numpy": "1.26.2",
+      "scipy": "1.15.3",
+      "matplotlib": "3.10.3",
+      "psutil": "5.9.5",
+      "networkx": "3.4.2"
+    },
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "slurm": {}
+  },
+  "source_hashes": {
+    "analyse_results.py": "c1a6e4e9a2f87a6327e37a150ebc9e52c21cb7296785f16ec1cf78dd873da607",
+    "qec_bench.py": "979dc3895b117326e7ca55521ae9ab6c6eacd040b3d58346549bd213b411096c",
+    "run_scaling.py": "52bff8b41a8013be111955f08d8011e95a75b2979003645f9d544446a999bcfe"
+  }
+}
