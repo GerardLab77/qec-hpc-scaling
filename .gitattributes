@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.png binary
+*.gz binary
+# Preserve the upstream output verbatim, including its trailing whitespace.
+slurm/generated/qstone-original.sbatch.txt -whitespace
