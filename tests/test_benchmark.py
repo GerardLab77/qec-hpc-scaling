@@ -10,6 +10,21 @@ class BenchmarkTests(unittest.TestCase):
         ranges = bounds(1003, 4)
         self.assertEqual([i for lo, hi in ranges for i in range(lo, hi)], list(range(1003)))
 
+    def test_invalid_workload_parameters(self):
+        # Reject invalid partitions before launching worker processes.
+        for shots, workers in ((0, 1), (3, 0), (2, 3)):
+            with self.subTest(shots=shots, workers=workers):
+                with self.assertRaises(ValueError):
+                    bounds(shots, workers)
+
+        # Invalid circuits should fail before simulation or benchmarking.
+        for distance, rounds, noise in ((2, 3, 0.005), (4, 3, 0.005),
+                                        (3, 0, 0.005), (3, 3, -0.01),
+                                        (3, 3, 0.5)):
+            with self.subTest(distance=distance, rounds=rounds, noise=noise):
+                with self.assertRaises(ValueError):
+                    circuit_for(distance, rounds, noise)
+
     def test_noiseless_memory(self):
         c = circuit_for(3, 3, 0)
         syn, actual = seeded_data(c, 200, 7)
