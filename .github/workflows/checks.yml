@@ -11,4 +11,5 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python -m unittest discover -s tests -v
       - run: python run_scaling.py --config configs/smoke.json --output scratch/ci
+      - run: python analyse_persistent.py results/persistent/20261118T190200Z-ceaad759 --output scratch/ci-persistent-evidence
       # CI checks functionality, never enforces noisy performance thresholds.

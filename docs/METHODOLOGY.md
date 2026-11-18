@@ -1,8 +1,19 @@
 # Measurement contract
 
+## Campaign scope
+
+The original desktop campaign below used rounds equal to distance. The completed
+Stanage scaling campaign (`configs/stanage.json`) used rounds fixed at five for
+all distances. It tested 1/2/4/8/16 workers, two batch sizes and five repetitions,
+with paired comparisons within its own allocation. The subsequent persistent
+campaign has separate timing boundaries, seeds, raw-file names and analysis;
+see [PERSISTENT.md](PERSISTENT.md). Do not combine speedups or baseline timings
+between these campaigns. Raw results for both are included in `results/`.
+
 ## Workload
 
-Stim `surface_code:rotated_memory_x`, odd distance d, rounds=d. Only
+Stim `surface_code:rotated_memory_x`, odd distance d; rounds=d in the original
+desktop config and rounds=5 in the Stanage configs. Only
 `after_clifford_depolarization=p` is enabled (p=0.005). This is the same noise
 parameter used by QStone's built-in example, **not** a calibrated hardware noise
 model or a claim of uniform physical error rate across every operation. Each

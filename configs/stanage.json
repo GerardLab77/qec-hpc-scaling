@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "seed": 20261118,
+  "repetitions": 5,
+  "experiments": [
+    {
+      "name": "strong_scaling",
+      "distances": [5],
+      "rounds": 5,
+      "shots": [100000, 1000000],
+      "workers": [1, 2, 4, 8, 16],
+      "p": 0.005
+    },
+    {
+      "name": "complexity",
+      "distances": [3, 5, 7],
+      "rounds": 5,
+      "shots": [100000],
+      "workers": [1],
+      "p": 0.005
+    }
+  ]
+}

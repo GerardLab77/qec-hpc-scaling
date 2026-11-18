@@ -1,201 +1,27 @@
-# QEC-HPC-Scaling
+# QEC HPC Scaling
 
-**Benchmarking classical quantum error correction decoding at scale.**
+Quantum error correction needs a classical decoder to interpret error measurements. I wanted to see how much faster I could decode a batch by splitting it between CPU workers, and whether starting all those workers was worth it.
 
-QEC-HPC-Scaling measures how offline decoding cost changes with batch size,
-surface-code space-time complexity and independent CPU worker processes.
-Stim generates noisy quantum-memory experiments and PyMatching decodes them.
-Riverlane's QStone generator supplies the basis for an adapted SLURM execution
-path. **Measured results are local Windows CPU results; HPC has not been run.**
+I used Stim to simulate surface-code quantum memories and PyMatching to decode them. Each worker has its own decoder and handles part of the same batch. I kept the total amount of work fixed when changing the worker count, so adding CPUs meant sharing the work rather than doing more of it.
 
-The contribution is a controlled scaling experiment with explicit timing
-boundaries and verified parallel outputs, rather than a new simulator, decoder,
-or scheduler. This is an independent project, not a Riverlane product.
+I started on my Windows desktop, where four workers gave a 3.34× median paired speedup for 100,000 shots. I then moved the experiments to the University of Sheffield's Stanage HPC cluster and used Slurm to run them with 1, 2, 4, 8 and 16 workers. With one million shots, 16 workers reached **10.07 million shots per second**, a **15.16× median paired speedup and 94.7% parallel efficiency**.
 
-## Main finding
+That looked good, but the timing started after the workers were ready. Starting and warming 16 workers took about 6.6 seconds, while decoding the million-shot batch took about 0.1 seconds. Creating a fresh group of workers for just one batch would cost more time than the faster decoding saved.
 
-At distance 5, five rounds and 100,000 shots, four warmed worker processes
-achieved **3.34× median paired speedup** (IQR 3.34–3.55), about **84% efficiency**.
-At 10,000 shots, four workers achieved **2.15×** (IQR 2.08–2.23), about **54%**.
-Dispatch and synchronization costs limit the smaller batch more strongly.
+So I added a persistent pool: start the workers once, give them several batches, then close them. I tested 1, 10 and 100 batches per pool, using fresh simulated data for every batch. The follow-up covered **150 pool sessions and 5,550 batch decodes**.
 
-This is a **warmed-pool** result. Median pool creation and warmup took roughly
-2.1 s with one worker and 8.5 s with four, whereas dispatch for the 100,000-shot
-batch took about 186 ms and 55 ms respectively. Creating a new pool for a single
-batch is consequently a poor optimisation on this machine. A real service should
-measure persistent-pool execution and amortise setup over many batches.
+For one million shots per batch, 16 workers were slower overall than one worker when processing a single batch. Reusing them for 100 batches changed that. The median paired speedup was **9.20× when counting startup, dispatches and shutdown**, and **1.82× for the full measured workload**, including input generation, hashing, file writes and validation. That is about **45% less time for the full workload**. Faster decoding helped, but the rest of the program still took time.
 
-![Paired strong scaling and efficiency](figures/scaling-c5c46f13b622.png)
+![How worker reuse changes decoding and overall speedup](figures/persistent-12198916/persistent-1.png)
 
-## Why this problem matters
+More workers were not always better. For 100 batches of 100,000 shots, eight workers gave a 1.74× full-workload speedup, compared with 1.43× for 16. The useful worker count depended on how much work there was to share.
 
-Quantum error correction distributes a logical qubit across physical qubits and
-repeatedly measures checks that reveal error information without directly
-reading the protected logical state. A classical decoder interprets those check
-patterns, or detector events, and predicts a correction to the logical state.
+I also compared code distances 3, 5 and 7 while keeping the number of rounds fixed at five. Larger codes took more time to decode: one-worker median throughput fell from 3.16 million shots per second at distance 3 to 0.286 million at distance 7.
 
-Decoding must keep up with incoming data; feedback can also impose latency
-deadlines. These are different requirements. This project measures offline batch
-throughput and amortized cost. It does **not** demonstrate real-time feedback
-latency or performance of Riverlane's FPGA/Deltaflow decoders.
+Each case had five seeded repetitions, with the case order shuffled. The analysis checked that the inputs, predictions and failure counts matched across worker counts. All 16 automated tests passed locally and on Stanage, including checks for worker reuse, fresh batches, uneven splitting and incomplete results.
 
-## Why these tools
+These are offline CPU experiments with a limited simulated noise model. They do not measure real-time quantum hardware or individual-shot latency. The two HPC campaigns ran in separate allocations, and each uses its own one-worker baseline. The figures show medians and quartiles; the results do not establish performance across the whole cluster.
 
-- **Stim 1.16.0:** established stabiliser-circuit simulation, detector sampling
-  and detector error models; no quantum hardware or account needed.
-- **PyMatching 2.4.0:** compiled minimum-weight perfect matching decoder with a
-  batch API. There is no thread-count argument in that API: parallelism here
-  splits independent shots among processes, each owning a decoder.
-- **QStone:** Riverlane's HPC/quantum integration benchmark already supplies
-  job packaging, scheduler templates and stage profiling. Its current built-in
-  PyMatching workload fixes distance/rounds/noise and its POST stage mixes
-  decoding with other work. It cannot supply the decoder-only controlled sweep
-  directly. This project reuses its SLURM generator, retaining the original
-  output and explicitly adapting the execution body for this offline workload.
-- **Deltakit:** inspected, but not required or used in these measurements.
-  Its circuit/noise/analysis workflows also use Stim and expose local
-  PyMatching decoding. Richer noise models would be a sensible later extension.
+The [scaling results](figures/stanage-12198700/summary.csv), [persistent-pool results](figures/persistent-12198916/speedup_summary.csv) and raw data for the [scaling run](results/20261118T180740Z-0775c4d9) and [persistent run](results/persistent/20261118T190200Z-ceaad759) are included. The [HPC guide](docs/HPC.md), [persistent-pool notes](docs/PERSISTENT.md) and [measurement contract](docs/METHODOLOGY.md) explain the experiments and how to run them.
 
-The audit is pinned to current inspected commits in [the technical plan](docs/PLAN.md).
-QStone is not on the measured hot path. No QStone decoding benchmark results
-are presented as this project's measurements.
-
-## Reproduce locally
-
-Python 3.10–3.12 is recommended. Start from the repository root:
-
-```bash
-python -m venv .venv
-# Linux/macOS:
-source .venv/bin/activate
-# Windows PowerShell instead:
-# .venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m unittest discover -s tests -v
-python run_scaling.py --config configs/smoke.json --output scratch/smoke
-python run_scaling.py --config configs/local.json --output results --label local-new
-```
-
-Analyse the **new run directory printed by the runner**, independently of the
-checked-in run:
-
-```bash
-python analyse_results.py results/YOUR_RUN_ID --output figures/new-run
-```
-
-To regenerate the included figures:
-
-```bash
-python analyse_results.py results/20261101T213409Z-71329104 --output figures
-```
-
-The measured matrix used 3.705 million simulated shots in total and about
-4 minutes on this host. Machine load changes runtime. Smoke takes much less.
-Every successful case is flushed immediately to JSONL; interrupted runs retain
-completed cases. Check repetition counts before interpreting partial data.
-
-## Experiments and initial results
-
-All experiments use rotated surface-code X-memory circuits, noise probability
-`p=0.005` **only after Clifford gates**, default uncorrelated MWPM and unpacked
-detector arrays. This is not a full hardware noise model. Five fresh seeds and
-fresh pools per case; case order is shuffled within each repetition.
-
-| Experiment | Hypothesis / independent variable | Dependent variables | Controls |
-|---|---|---|---|
-| Batch size | More shots amortise dispatch overhead; 1k/10k/100k shots | Throughput, amortized time | d=5, rounds=5, 1 worker, fixed p |
-| Complexity | Larger space-time graphs cost more; d=3/5/7, rounds=d | Cost/shot, detector count, failures | 100k shots, 1 worker, fixed p |
-| Strong scaling | More workers help larger batches more; 1/2/4 processes | Paired speedup, efficiency, dispatch/kernel times | Same total shots, d=5, rounds=5, fixed p, identical input hashes |
-
-Each row below is a median [first quartile, third quartile], **not** a
-confidence interval. Five timings do not justify significance claims from small
-differences. Speedups use seed-paired timing ratios, not ratios of medians.
-
-| Shots | 1-worker throughput (shots/s), batch-size experiment |
-|---:|---:|
-| 1,000 | 401,590 [367,309, 401,897] |
-| 10,000 | 522,101 [513,619, 523,092] |
-| 100,000 | 537,204 [534,266, 539,789] |
-
-Most throughput gain appears between 1k and 10k. The smaller subsequent gain
-suggests diminishing dispatch amortisation; more isolated measurements would
-be needed to resolve small differences reliably.
-
-| Distance / rounds | Detectors | Median dispatch cost (µs/shot) | Logical failure probability, 95% Wilson interval |
-|---:|---:|---:|---:|
-| 3 / 3 | 24 | 0.263 | 0.005946 [0.005737, 0.006163] |
-| 5 / 5 | 120 | 1.871 | 0.004852 [0.004663, 0.005048] |
-| 7 / 7 | 336 | 6.157 | 0.002894 [0.002749, 0.003047] |
-
-The d=7 workload costs about 23× as much per shot as d=3 in this experiment.
-Distance and round count both increase, so this does not isolate spatial
-distance or establish an asymptotic exponent. Logical failures are a secondary
-sanity check, not a threshold study or a physical-error-rate sweep.
-
-![Batch size and space-time complexity](figures/workload-c5c46f13b622.png)
-
-| Fixed shots | Workers | Median throughput (shots/s) | Paired speedup [IQR] | Median efficiency |
-|---:|---:|---:|---:|---:|
-| 10,000 | 1 | 517,371 | 1.00 | 100% |
-| 10,000 | 2 | 893,823 | 1.70 [1.63, 1.79] | 85% |
-| 10,000 | 4 | 1,110,864 | 2.15 [2.08, 2.23] | 54% |
-| 100,000 | 1 | 538,776 | 1.00 | 100% |
-| 100,000 | 2 | 1,050,846 | 1.96 [1.94, 1.96] | 98% |
-| 100,000 | 4 | 1,820,376 | 3.34 [3.34, 3.55] | 84% |
-
-Input and prediction hashes match across every worker-count comparison.
-One two-worker 100k trial achieved only 1.33× speedup; it remains in the raw data.
-Quartiles should not be read as the full observed range.
-
-## Method and limitations
-
-Dispatch timings start after input generation, decoder construction and worker
-warmup; they include synchronization and returned predictions. Each worker
-also times its actual batch decode. Worker RSS is a snapshot, **not peak
-memory**. CPU times were too coarsely quantised for short Windows trials, so
-CPU utilisation is not interpreted. `µs/shot` is amortized cost, **not a
-single-shot latency measurement**. See the exact [measurement contract](docs/METHODOLOGY.md).
-
-Initial host: Intel Core i5-10400F, 6 physical cores / 12 logical CPUs,
-Windows build 26200, Python 3.10.6. No CPU pinning or exclusive allocation;
-background load, SMT, clocks and filesystem caching can affect results.
-Metadata records hardware, affinity, RAM, versions, seeds, config hash,
-measurement-time code hashes and any SLURM variables. Analysis/reporting can
-evolve after measurement; the benchmark source hashes identify the timed code.
-The initial run predates git initialisation, so its revision is null rather
-than an invented commit.
-
-Evidence: [raw JSONL](results/20261101T213409Z-71329104/measurements.jsonl),
-[metadata](results/20261101T213409Z-71329104/metadata.json),
-[summary CSV](figures/summary.csv), [paired ratios](figures/paired_speedups.csv).
-Different machines/software are kept in separate analysis cohorts. Reused seeded
-datasets across experiment families or worker counts must not be pooled to
-inflate logical-error sample sizes.
-
-## SLURM extension
-
-[HPC instructions](docs/HPC.md) describe the QStone-generated pathway, exact
-local adaptations, Stanage environment setup, CPU allocation, local scratch and
-aggregation. The example is generated and inspected locally; it has **not**
-been submitted to SLURM. No SSH, cluster credentials or QPU resources are needed
-for the local project.
-
-Useful next experiments: persistent pools over many batches; fixed-rounds
-distance sweep; larger workloads once startup is amortised; same-node repeated
-SLURM runs with core binding; only then NUMA and multi-node campaign execution.
-Do not launch a million shots or eight workers simply to enlarge the matrix.
-
-## Repository map
-
-| Path | Purpose |
-|---|---|
-| `qec_bench.py` | Seeded workload, process workers, measurement boundaries |
-| `run_scaling.py`, `configs/` | Repeated, randomized config-driven execution |
-| `analyse_results.py` | Validated aggregation, CSVs and plots |
-| `results/`, `figures/` | Actual initial local measurements and analysis |
-| `scripts/generate_slurm.py`, `slurm/` | QStone generator reuse and example output |
-| `tests/` | Decoder correctness, splitting and analysis safeguards |
-| `docs/` | Audit, methodology, HPC guide and interview explanation |
-
-QStone contribution candidates are documented in [UPSTREAM.md](docs/UPSTREAM.md).
-No issue, PR or message has been submitted upstream.
+[Stim](https://github.com/quantumlib/Stim) · [PyMatching](https://github.com/oscarhiggott/PyMatching) · [QStone attribution](THIRD_PARTY.md) · [MIT licence](LICENSE)

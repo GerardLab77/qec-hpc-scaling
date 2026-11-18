@@ -114,6 +114,10 @@ def plot_summaries(summary, speedups, output):
             (axes[0], "batch_size", "shots", "Dispatch throughput (shots/s)"),
             (axes[1], "complexity", "distance", "Amortized dispatch cost (µs/shot)")]:
             series = sorted([r for r in data if r["experiment"] == exp], key=lambda r:r[xkey])
+            if not series and exp == "batch_size":
+                baselines = [r for r in data if r["experiment"] == "strong_scaling" and r["workers"] == 1]
+                if len({(r["distance"], r["rounds"], r["p"]) for r in baselines}) == 1:
+                    series = sorted(baselines, key=lambda r: r[xkey])
             metric = "throughput_shots_s" if exp == "batch_size" else "amortized_us_shot"
             if series:
                 med = np.array([r[metric+"_median"] for r in series])
@@ -121,7 +125,12 @@ def plot_summaries(summary, speedups, output):
                 high = [r[metric+"_q3"] for r in series] - med
                 ax.errorbar([r[xkey] for r in series], med, yerr=[low,high],
                             marker="o", capsize=4, color="#226C9E")
-            ax.set(xlabel="Shots per batch" if xkey=="shots" else "Code distance (rounds = distance)",
+            rounds = {r["rounds"] for r in series}
+            distance_label = (f"Code distance (rounds = {next(iter(rounds))})" if len(rounds) == 1
+                              else "Code distance (rounds = distance)" if
+                              all(r["rounds"] == r["distance"] for r in series)
+                              else "Code distance (rounds vary)")
+            ax.set(xlabel="Shots per batch" if xkey=="shots" else distance_label,
                    ylabel=ylabel, title="Batch amortisation" if xkey=="shots" else "Space-time complexity")
             if xkey=="shots":
                 ax.set_xscale("log")

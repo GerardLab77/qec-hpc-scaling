@@ -1,0 +1,148 @@
+{
+  "schema": "qec-persistent-v1",
+  "run_id": "20261118T190200Z-ceaad759",
+  "label": "stanage-persistent",
+  "config": {
+    "schema_version": 1,
+    "seed": 20261118,
+    "repetitions": 5,
+    "experiments": [
+      {
+        "name": "persistent",
+        "distances": [
+          5
+        ],
+        "rounds": 5,
+        "shots": [
+          100000,
+          1000000
+        ],
+        "workers": [
+          1,
+          2,
+          4,
+          8,
+          16
+        ],
+        "batches": [
+          1,
+          10,
+          100
+        ],
+        "p": 0.005
+      }
+    ]
+  },
+  "config_sha256": "4a990632691970976f9d291ac89851b0a3704affe0e2ae8212b61df098a721a8",
+  "hardware": {
+    "hostname": "node014.stanage.hpc.shef.ac.uk",
+    "platform": "Linux-5.14.0-687.66.2.el9_8.x86_64-x86_64-with-glibc2.34",
+    "processor": "x86_64",
+    "python": "3.10.8 (main, Jul  7 2026, 17:52:20) [GCC 12.2.0]",
+    "logical_cpus": 64,
+    "physical_cores": 64,
+    "affinity": [
+      17,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31,
+      33,
+      35,
+      37,
+      39,
+      41,
+      43,
+      45,
+      47
+    ],
+    "ram_bytes": 269739978752,
+    "versions": {
+      "stim": "1.16.0",
+      "pymatching": "2.4.0",
+      "numpy": "1.26.2",
+      "scipy": "1.15.3",
+      "matplotlib": "3.10.3",
+      "psutil": "5.9.5",
+      "networkx": "3.4.2"
+    },
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "slurm": {
+      "SLURM_TRES_PER_TASK": "cpu=16",
+      "SLURM_JOB_USER": "aca24gl",
+      "SLURM_TASKS_PER_NODE": "1",
+      "SLURM_JOB_UID": "557519",
+      "SLURM_EXPORT_ENV": "ALL",
+      "SLURM_TASK_PID": "3966326",
+      "SLURM_LOCALID": "0",
+      "SLURM_SUBMIT_DIR": "/users/aca24gl/qec-hpc-scaling",
+      "SLURM_JOB_START_TIME": "1795028518",
+      "SLURM_CLUSTER_NAME": "stanage.alces.network",
+      "SLURM_JOB_END_TIME": "1795035718",
+      "SLURM_CPUS_ON_NODE": "16",
+      "SLURM_JOB_CPUS_PER_NODE": "16",
+      "SLURM_GTIDS": "0",
+      "SLURM_JOB_PARTITION": "sheffield",
+      "SLURM_OOM_KILL_STEP": "0",
+      "SLURM_JOB_NUM_NODES": "1",
+      "SLURM_STEPID": "0",
+      "SLURM_JOBID": "12198916",
+      "SLURM_JOB_QOS": "normal",
+      "SLURM_THREADS_PER_CORE": "1",
+      "SLURM_JOB_EXCLUSIVE": "NO",
+      "SLURM_PROCID": "0",
+      "SLURM_CPUS_PER_TASK": "16",
+      "SLURM_NTASKS": "1",
+      "SLURM_TOPOLOGY_ADDR": "ibcore.ibedge1.node014",
+      "SLURM_TOPOLOGY_ADDR_PATTERN": "switch.switch.node",
+      "SLURM_SCRIPT_CONTEXT": "prolog_task",
+      "SLURM_MEM_PER_NODE": "16384",
+      "SLURM_NODELIST": "node014",
+      "SLURM_STEP_ID": "0",
+      "SLURM_JOB_ACCOUNT": "default",
+      "SLURM_PRIO_PROCESS": "0",
+      "SLURM_NPROCS": "1",
+      "SLURM_NNODES": "1",
+      "SLURM_SUBMIT_HOST": "loginb.stanage.hpc.shef.ac.uk",
+      "SLURM_JOB_ID": "12198916",
+      "SLURM_NODEID": "0",
+      "SLURM_JOB_OVERSUBSCRIBE": "NO",
+      "SLURM_JOB_SLUID": "sFRSM7R0M4JE00",
+      "SLURM_CONF": "/etc/slurm/slurm.conf",
+      "SLURM_JOB_NAME": "qec-persistent",
+      "SLURM_HINT": "nomultithread",
+      "SLURM_JOB_GID": "1600",
+      "SLURM_GET_USER_ENV": "1",
+      "SLURM_JOB_NODELIST": "node014",
+      "SLURM_UMASK": "0022",
+      "SLURM_DISTRIBUTION": "cyclic",
+      "SLURM_JOB_GROUP": "ac",
+      "SLURM_STEP_NODELIST": "node014",
+      "SLURM_STEP_NUM_NODES": "1",
+      "SLURM_STEP_NUM_TASKS": "1",
+      "SLURM_STEP_TASKS_PER_NODE": "1",
+      "SLURM_STEP_LAUNCHER_PORT": "41089",
+      "SLURM_SRUN_COMM_PORT": "41089",
+      "SLURM_SRUN_COMM_HOST": "10.10.1.14",
+      "SLURM_CPU_BIND_LIST": "0x0000AAAAAAAA0000",
+      "SLURM_CPU_BIND_TYPE": "mask_cpu:",
+      "SLURM_CPU_BIND_VERBOSE": "quiet",
+      "SLURM_LAUNCH_NODE_IPADDR": "10.10.1.14"
+    }
+  },
+  "git_revision": "9929de6a39081104cb2b831cb7b99140c267b153",
+  "git_dirty": true,
+  "expected_sessions": 150,
+  "source_hashes": {
+    "persistent_pool.py": "10d7652f39731c20de7c9e4631664fed3fda92873212c8af12134b28d67d6e27",
+    "qec_bench.py": "979dc3895b117326e7ca55521ae9ab6c6eacd040b3d58346549bd213b411096c",
+    "analyse_persistent.py": "6ffbc68c8e75690b2be1a84ec14699d27e0a78d7ee5cd9ced9f32244a57e74ab"
+  }
+}

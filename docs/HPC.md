@@ -1,8 +1,52 @@
-# Sheffield / SLURM pathway (prepared, not executed)
+# Sheffield / Slurm experiments
 
-The local matrix and analysis are the MVP. No cluster login or job submission
-was attempted. This is a **single-node process-parallel workload**, not MPI.
+Two campaigns have completed on Stanage, following confirmation that the
+project was permitted for personal academic use. This is a
+**single-node process-parallel workload**, not MPI.
 More nodes can run independent campaigns; they do not jointly decode a shot.
+
+## Completed campaigns and reproduction
+
+| Campaign | Config | Script | Completed observations |
+|---|---|---|---|
+| Scaling and fixed-rounds distance | `configs/stanage.json` | `slurm/stanage.sbatch` | 65 measurements, 13 cases, five repetitions |
+| Persistent pools | `configs/persistent-stanage.json` | `slurm/persistent.sbatch` | 150 sessions, 5,550 batches, five repetitions |
+
+Both requested one node, 16 CPUs, 16 GB RAM and no hardware multithreading.
+Workers inherited the allocation's CPU mask; no individual-worker pinning or
+exclusive node allocation was used. Run all worker counts in the same job;
+the two existing campaigns have separate same-allocation baselines.
+
+The scaling job completed in 00:03:35; the persistent job in 01:49:04. Both
+reported `COMPLETED` and exit code `0:0` in scheduler output supplied by the
+operator. Job logs are retained at `qec-12198700.out` and
+`qec-persistent-12198916.out`. Exact hosts, affinity, package versions, source
+hashes and scheduler context are in each run's metadata.
+
+Use the environment preparation below inside an allocated compute session.
+Then, from the repository root on a login node, submit the desired script:
+
+```bash
+bash -n slurm/stanage.sbatch
+sbatch --test-only slurm/stanage.sbatch
+sbatch slurm/stanage.sbatch
+```
+
+For persistent pools, use `slurm/persistent.sbatch` after its dedicated smoke
+check; see [PERSISTENT.md](PERSISTENT.md). These scripts use the permitted
+default account and partition of the operator's allocation; other users must
+check their own project permission and account/resource limits first.
+
+Reproduce the included analyses on a permitted analysis machine:
+
+```bash
+python analyse_results.py results/20261118T180740Z-0775c4d9 --output figures/stanage-12198700
+python analyse_persistent.py results/persistent/20261118T190200Z-ceaad759 --output figures/persistent-12198916
+```
+
+The remaining QStone instructions describe the original, separately generated
+four-CPU example. That example was inspected locally and has not been submitted;
+the completed campaigns used the two direct scripts above.
 
 ## How QStone is reused
 

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "seed": 20261118,
+  "repetitions": 5,
+  "experiments": [
+    {"name": "persistent", "distances": [5], "rounds": 5,
+     "shots": [100000, 1000000], "workers": [1, 2, 4, 8, 16],
+     "batches": [1, 10, 100], "p": 0.005}
+  ]
+}

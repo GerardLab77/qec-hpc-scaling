@@ -1,0 +1,23 @@
+{
+  "9f7407eaac0e": {
+    "hostname": "node005.stanage.hpc.shef.ac.uk",
+    "processor": "x86_64",
+    "platform": "Linux-5.14.0-687.66.2.el9_8.x86_64-x86_64-with-glibc2.34",
+    "versions": {
+      "stim": "1.16.0",
+      "pymatching": "2.4.0",
+      "numpy": "1.26.2",
+      "scipy": "1.15.3",
+      "matplotlib": "3.10.3",
+      "psutil": "5.9.5",
+      "networkx": "3.4.2"
+    },
+    "label": "stanage-scaling",
+    "config_sha256": "169babd6db42f54e2ff5a067c70c6693b4f18653504cb01a8f2306e01fc4a536",
+    "source_hashes": {
+      "analyse_results.py": "d7044e3ec14cb9060f61103a55cd1f5b7a3e362bf81436135e12b61b97cf6f6a",
+      "qec_bench.py": "979dc3895b117326e7ca55521ae9ab6c6eacd040b3d58346549bd213b411096c",
+      "run_scaling.py": "52bff8b41a8013be111955f08d8011e95a75b2979003645f9d544446a999bcfe"
+    }
+  }
+}

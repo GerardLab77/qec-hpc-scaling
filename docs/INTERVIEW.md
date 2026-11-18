@@ -43,5 +43,22 @@ experiments rather than cooperative decoding.
 
 **Honest boundaries:** a small controlled benchmark, not a new QEC algorithm,
 threshold study, production decoder or claim of quantum advantage. The initial
-results and their uncertainty are in the README and figures; HPC is prepared
-but has not been executed.
+results and their uncertainty are in the README and figures. Two single-node
+Stanage campaigns have completed, including persistent-pool execution. Neither
+tested multi-node decoding or real-time quantum feedback.
+
+## CV wording grounded in the included results
+
+- Benchmarked offline quantum error-correction decoding on Sheffield's Stanage
+  HPC cluster using Slurm, achieving 15.16x median paired speedup and 94.7%
+  parallel efficiency with 16 CPU workers on million-shot batches.
+- Investigated process-startup amortisation across 150 persistent-pool sessions
+  and 5,550 batches; measured 9.20x decoder-service speedup and approximately
+  45% lower full-workload time with 16 workers over 100 million-shot batches.
+- Added reproducible seeded experiments and 16 automated tests covering decoder
+  correctness, process reuse and analysis safeguards; validated matching inputs
+  and predictions across worker counts in both completed HPC campaigns.
+
+Use two of these if space is limited. Decoder-service time includes setup,
+dispatches and shutdown; full-workload time also includes serial simulation,
+input I/O and validation. The 45% figure is not a decoder-only speedup claim.
